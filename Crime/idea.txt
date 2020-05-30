@@ -1,1 +1,4 @@
 This is a subfolder for the datasets @Mantas had in mind regarding COVID-19 affecting crime rates.
+
+Along with analysing crime rates/occurances, maybe we can also add a subsection that addresses sexual assualt and similar crimes?
+That way we can kill two birds with one stone. 

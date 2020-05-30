@@ -1,3 +1,5 @@
+
+DENVER
 This is a crime datset for Denver, in line with @Mantas's idea I believe. 
 
 We can examine the frequency of crime pre Coronavirus in Denver compared to current statistics, and the compare 
@@ -9,9 +11,16 @@ Link to the dataset on Kaggle (AND ITS UPDATED EVERY WEEK).
 
 If we find any similar crime datasets for other location, we can also compare across the different datasets possibly.
 
+LOS ANGELES
 Here is the crime data for Los Angeles in 2020. Same story with the Denver crime idea. Can be used for comparison purposes. 
 
 https://catalog.data.gov/dataset/crime-data-from-2020-to-present
 https://data.lacity.org/A-Safe-City/Crime-Data-from-2020-to-Present/2nrs-mtv8/data
 
 -- Links show the same data.
+
+DISTRICT OF COLUMBIA
+https://opendata.dc.gov/datasets/crime-incidents-in-2020
+
+--NOTE
+A bunch of the crime datasets, you have to contact the owner to recieve the dataset. Is this allowed ???

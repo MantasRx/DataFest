@@ -5,4 +5,6 @@ those with their lockdown measures.
 
 https://www.kaggle.com/paultimothymooney/denver-crime-data
 
-Link to the dataset on Kaggle (AND ITS UPDATED EVERY WEEK)
+Link to the dataset on Kaggle (AND ITS UPDATED EVERY WEEK).
+
+If we find any similar crime datasets for other location, we can also compare across the different datasets possibly.

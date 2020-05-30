@@ -1,0 +1,8 @@
+This is a crime datset for Denver, in line with @Mantas's idea I believe. 
+
+We can examine the frequency of crime pre Coronavirus in Denver compared to current statistics, and the compare 
+those with their lockdown measures.
+
+https://www.kaggle.com/paultimothymooney/denver-crime-data
+
+Link to the dataset on Kaggle (AND ITS UPDATED EVERY WEEK)

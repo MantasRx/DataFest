@@ -12,3 +12,5 @@ https://www.kaggle.com/aniruddhasshirahatti/us-unemployment-dataset-2010-2020
 It mentions in the description of the dataset that it is intead for COVID-19 research purposes. Maybe we can assess the affect 
 that COVID-19 and the subsequent governmental reactions have had on livelihoods; unemployments is one of those statistics. We can assess which race was most affected, for example. 
 
+There is also unemployment based on states. Then we can also include their lockdown measures to see whether unemployments in certain states that were less affected by the pandemic/ more relaxed with their social distancing guidelines correlates to their unemployment increase/decrease ?
+

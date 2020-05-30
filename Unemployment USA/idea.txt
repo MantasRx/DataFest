@@ -1,0 +1,7 @@
+This is a dataset for the Unemployment in the US
+
+https://www.kaggle.com/aniruddhasshirahatti/us-unemployment-dataset-2010-2020
+
+It mentions in the description of the dataset that it is intead for COVID-19 research purposes. Maybe we can assess the affect 
+that COVID-19 and the subsequent governmental reactions have had on livelihoods; unemployments is one of those statistics.
+

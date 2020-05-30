@@ -2,6 +2,13 @@ This is a dataset for the Unemployment in the US
 
 https://www.kaggle.com/aniruddhasshirahatti/us-unemployment-dataset-2010-2020
 
+****
+
+    This dataset contains time series data of unemployment rate in US from January 2010 to Present. It contains unemployment rate records based on education qualification, race, and gender of adults.
+    This dataset also contains state-wise unemployment rate data for year 2020.
+    The data set is clean and doesn't require much pre-processing. Dataset can be used with BI tools like Tableau as well.
+****
+
 It mentions in the description of the dataset that it is intead for COVID-19 research purposes. Maybe we can assess the affect 
-that COVID-19 and the subsequent governmental reactions have had on livelihoods; unemployments is one of those statistics.
+that COVID-19 and the subsequent governmental reactions have had on livelihoods; unemployments is one of those statistics. We can assess which race was most affected, for example. 
 

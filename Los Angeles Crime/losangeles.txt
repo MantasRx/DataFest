@@ -1,6 +1,0 @@
-Here is the crime data for Los Angeles in 2020. Same story with the Denver crime idea. Can be used for comparison purposes. 
-
-https://catalog.data.gov/dataset/crime-data-from-2020-to-present
-https://data.lacity.org/A-Safe-City/Crime-Data-from-2020-to-Present/2nrs-mtv8/data
-
--- Links show the same data.

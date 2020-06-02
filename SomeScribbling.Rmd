@@ -1,0 +1,18 @@
+---
+title: "SomeScribbling"
+output: github_document
+---
+
+```{r load-packages, message = FALSE}
+library(tidyverse)
+library(janitor)
+library(broom)
+```
+
+```{r load-data}
+
+april_srvy <- read_csv("01_April_30_covid_impact_survey.csv")
+
+may_srvy <- read_csv("02_May_12_covid_impact_survey.csv")
+
+```

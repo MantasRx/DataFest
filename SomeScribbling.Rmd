@@ -10,9 +10,8 @@ library(broom)
 ```
 
 ```{r load-data, message=FALSE}
-
 april_srvy <- read_csv("AP-Survey/01_April_30_covid_impact_survey.csv")
 
 may_srvy <- read_csv("AP-Survey/02_May_12_covid_impact_survey.csv")
-
+# Trying to remember R example: april_srvy %>% select(PHYS3A) %>% group_by(PHYS3A) %>% summarise(n = n())
 ```

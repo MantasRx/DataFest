@@ -9,13 +9,11 @@ library(janitor)
 library(broom)
 ```
 
-```{r load-data, message=FALSE}
+```{r load-data, message=FALSE, warning=FALSE}
 april_srvy <- read_csv("AP-Survey/01_April_30_covid_impact_survey.csv")
 
 may_srvy <- read_csv("AP-Survey/02_May_12_covid_impact_survey.csv")
-# Trying to remember R example: april_srvy %>% select(PHYS3A) %>% group_by(PHYS3A) %>% summarise(n = n())
 ```
-
 
 ```{r happiness-var}
 soc_answers <- april_srvy %>%
@@ -121,5 +119,7 @@ happiness_calculator <- function(socialAScore, socialBScore, socialCScore, socia
 may_srvy <- may_srvy %>% mutate(happiness = happiness_calculator(SOC5AScore, SOC5BScore, SOC5CScore, SOC5DScore, SOC5EScore))
 
 april_srvy <- april_srvy %>% mutate(happiness = happiness_calculator(SOC5AScore, SOC5BScore, SOC5CScore, SOC5DScore, SOC5EScore))
+
+# Result check april_srvy %>% select(happiness) %>% group_by(happiness) %>% summarise(n = n())
 
 ```

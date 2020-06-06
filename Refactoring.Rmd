@@ -21,4 +21,56 @@ may <- may %>%
 ```{r delete-SOC5-answers-april}
 april <- april %>%
     select(- c(SOC5A, SOC5B, SOC5C, SOC5D, SOC5E))
+head(april)
 ```
+
+```{r factor-SOC1}
+may$SOC1 <- factor(may$SOC1, levels = c("All", "Most", "Some", "None"), ordered = TRUE)
+april$SOC1 <- factor(april$SOC1, levels = c("All", "Most", "Some", "None"), ordered = TRUE)
+```
+
+```{r factor-all-SOCs}
+soc_cols = c("SOC2A", "SOC2B", "SOC3A", "SOC3B")
+may[soc_cols] = lapply (may[soc_cols], factor, ordered = FALSE)
+april[soc_cols] = lapply (april[soc_cols], factor, ordered = FALSE)
+```
+
+```{r factor-yes-no-questions}
+
+colvars = names(may)
+
+
+start_loc = match("ECON8A",colvars)
+
+
+end_loc = match("ECON8S",colvars)
+
+
+may[start_loc:end_loc] = lapply(may[start_loc:end_loc], factor, ordered = FALSE)
+
+april[start_loc:end_loc] = lapply(april[start_loc:end_loc], factor, ordered = FALSE)
+
+yesnocols = c("SOC4A", "SOC4B", "PHYS4", "PHYS5", "PHYS6")
+may[yesnocols] = lapply(may[yesnocols], factor)
+april[yesnocols] = lapply(april[yesnocols], factor)
+
+start_loc2 = match("PHYS1A",colvars)
+
+
+end_loc2 = match("PHYS1Q",colvars)
+
+
+may[start_loc2:end_loc2] = lapply(may[start_loc2:end_loc2], factor, ordered = FALSE)
+
+april[start_loc2:end_loc2] = lapply(april[start_loc2:end_loc2], factor, ordered = FALSE)
+
+yesnocols2 = c("PHYS11", "PHYS9A", "PHYS9B", "PHYS9C", "PHYS9D", "PHYS9E", "PHYS9F", "PHYS9G", "PHYS9H")
+may[yesnocols2] = lapply (may[yesnocols2], factor)
+april[yesnocols2] = lapply (april[yesnocols2], factor)
+```
+
+``` {r recode-PHYS8}
+may$PHYS8 <- factor(may$PHYS8)
+april$PHYS8 <- factor(april$PHYS8)
+```
+

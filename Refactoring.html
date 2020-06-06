@@ -370,7 +370,76 @@ summary {
 <pre class="r"><code>may &lt;- may %&gt;%
     select(- c(SOC5A, SOC5B, SOC5C, SOC5D, SOC5E))</code></pre>
 <pre class="r"><code>april &lt;- april %&gt;%
-    select(- c(SOC5A, SOC5B, SOC5C, SOC5D, SOC5E))</code></pre>
+    select(- c(SOC5A, SOC5B, SOC5C, SOC5D, SOC5E))
+head(april)</code></pre>
+<pre><code>## # A tibble: 6 x 176
+##      X1  X1_1  SU_ID P_PANEL NATIONAL_WEIGHT REGION_WEIGHT NATIONAL_WEIGHT…
+##   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;   &lt;lgl&gt;                   &lt;dbl&gt; &lt;lgl&gt;           
+## 1     1     1 2.00e7 ABS     NA                      1.22  NA              
+## 2     2     2 2.00e7 ABS     NA                      0.229 NA              
+## 3     3     3 2.00e7 ABS     NA                      0.252 NA              
+## 4     4     4 2.00e7 ABS     NA                      0.207 NA              
+## 5     5     5 2.00e7 ABS     NA                      3.39  NA              
+## 6     6     6 2.00e7 ABS     NA                      1.12  NA              
+## # … with 169 more variables: REGION_WEIGHT_POP &lt;dbl&gt;, P_GEO &lt;chr&gt;, SOC1 &lt;chr&gt;,
+## #   SOC2A &lt;chr&gt;, SOC2B &lt;chr&gt;, SOC3A &lt;chr&gt;, SOC3B &lt;chr&gt;, SOC4A &lt;chr&gt;,
+## #   SOC4B &lt;chr&gt;, PHYS8 &lt;chr&gt;, PHYS1A &lt;chr&gt;, PHYS1B &lt;chr&gt;, PHYS1C &lt;chr&gt;,
+## #   PHYS1D &lt;chr&gt;, PHYS1E &lt;chr&gt;, PHYS1F &lt;chr&gt;, PHYS1G &lt;chr&gt;, PHYS1H &lt;chr&gt;,
+## #   PHYS1I &lt;chr&gt;, PHYS1J &lt;chr&gt;, PHYS1K &lt;chr&gt;, PHYS1L &lt;chr&gt;, PHYS1M &lt;chr&gt;,
+## #   PHYS1N &lt;chr&gt;, PHYS1O &lt;chr&gt;, PHYS1P &lt;chr&gt;, PHYS1Q &lt;chr&gt;, PHYS2_1 &lt;chr&gt;,
+## #   PHYS2_2 &lt;chr&gt;, PHYS2_3 &lt;chr&gt;, PHYS2_4 &lt;chr&gt;, PHYS2_5 &lt;chr&gt;, PHYS2_6 &lt;chr&gt;,
+## #   PHYS2_7 &lt;chr&gt;, PHYS2_8 &lt;chr&gt;, PHYS2_9 &lt;chr&gt;, PHYS2_10 &lt;chr&gt;,
+## #   PHYS2_11 &lt;chr&gt;, PHYS2_12 &lt;chr&gt;, PHYS2_13 &lt;chr&gt;, PHYS2_14 &lt;chr&gt;,
+## #   PHYS2_15 &lt;chr&gt;, PHYS2_16 &lt;chr&gt;, PHYS2_17 &lt;chr&gt;, PHYS2_18 &lt;chr&gt;,
+## #   PHYS2_19 &lt;chr&gt;, PHYS2_DK &lt;chr&gt;, PHYS2_SKP &lt;chr&gt;, PHYS2_REF &lt;chr&gt;,
+## #   PHYS10A &lt;chr&gt;, PHYS10B &lt;chr&gt;, PHYS10C &lt;chr&gt;, PHYS10D &lt;chr&gt;, PHYS10E &lt;chr&gt;,
+## #   ECON8A &lt;chr&gt;, ECON8B &lt;chr&gt;, ECON8C &lt;chr&gt;, ECON8D &lt;chr&gt;, ECON8E &lt;chr&gt;,
+## #   ECON8F &lt;chr&gt;, ECON8G &lt;chr&gt;, ECON8H &lt;chr&gt;, ECON8I &lt;chr&gt;, ECON8J &lt;chr&gt;,
+## #   ECON8K &lt;chr&gt;, ECON8L &lt;chr&gt;, ECON8M &lt;chr&gt;, ECON8N &lt;chr&gt;, ECON8O &lt;chr&gt;,
+## #   ECON8P &lt;chr&gt;, ECON8Q &lt;chr&gt;, ECON8R &lt;chr&gt;, ECON8S &lt;chr&gt;, ECON7_1 &lt;chr&gt;,
+## #   ECON7_2 &lt;chr&gt;, ECON7_3 &lt;chr&gt;, ECON7_4 &lt;chr&gt;, ECON7_5 &lt;chr&gt;, ECON7_6 &lt;chr&gt;,
+## #   ECON7_7 &lt;chr&gt;, ECON7_8 &lt;chr&gt;, ECON7_DK &lt;chr&gt;, ECON7_SKP &lt;chr&gt;,
+## #   ECON7_REF &lt;chr&gt;, ECON1 &lt;chr&gt;, ECON2 &lt;chr&gt;, ECON4 &lt;chr&gt;, ECON3 &lt;chr&gt;,
+## #   ECON4A &lt;chr&gt;, ECON4B &lt;chr&gt;, ECON6A &lt;chr&gt;, ECON6B &lt;chr&gt;, ECON6C &lt;chr&gt;,
+## #   ECON6D &lt;chr&gt;, ECON6E &lt;chr&gt;, ECON6F &lt;chr&gt;, ECON6G &lt;chr&gt;, ECON6H &lt;chr&gt;,
+## #   ECON6I &lt;chr&gt;, ECON6J &lt;chr&gt;, …</code></pre>
+<pre class="r"><code>may$SOC1 &lt;- factor(may$SOC1, levels = c(&quot;All&quot;, &quot;Most&quot;, &quot;Some&quot;, &quot;None&quot;), ordered = TRUE)
+april$SOC1 &lt;- factor(april$SOC1, levels = c(&quot;All&quot;, &quot;Most&quot;, &quot;Some&quot;, &quot;None&quot;), ordered = TRUE)</code></pre>
+<pre class="r"><code>soc_cols = c(&quot;SOC2A&quot;, &quot;SOC2B&quot;, &quot;SOC3A&quot;, &quot;SOC3B&quot;)
+may[soc_cols] = lapply (may[soc_cols], factor, ordered = FALSE)
+april[soc_cols] = lapply (april[soc_cols], factor, ordered = FALSE)</code></pre>
+<pre class="r"><code>colvars = names(may)
+
+
+start_loc = match(&quot;ECON8A&quot;,colvars)
+
+
+end_loc = match(&quot;ECON8S&quot;,colvars)
+
+
+may[start_loc:end_loc] = lapply(may[start_loc:end_loc], factor, ordered = FALSE)
+
+april[start_loc:end_loc] = lapply(april[start_loc:end_loc], factor, ordered = FALSE)
+
+yesnocols = c(&quot;SOC4A&quot;, &quot;SOC4B&quot;, &quot;PHYS4&quot;, &quot;PHYS5&quot;, &quot;PHYS6&quot;)
+may[yesnocols] = lapply(may[yesnocols], factor)
+april[yesnocols] = lapply(april[yesnocols], factor)
+
+start_loc2 = match(&quot;PHYS1A&quot;,colvars)
+
+
+end_loc2 = match(&quot;PHYS1Q&quot;,colvars)
+
+
+may[start_loc2:end_loc2] = lapply(may[start_loc2:end_loc2], factor, ordered = FALSE)
+
+april[start_loc2:end_loc2] = lapply(april[start_loc2:end_loc2], factor, ordered = FALSE)
+
+yesnocols2 = c(&quot;PHYS11&quot;, &quot;PHYS9A&quot;, &quot;PHYS9B&quot;, &quot;PHYS9C&quot;, &quot;PHYS9D&quot;, &quot;PHYS9E&quot;, &quot;PHYS9F&quot;, &quot;PHYS9G&quot;, &quot;PHYS9H&quot;)
+may[yesnocols2] = lapply (may[yesnocols2], factor)
+april[yesnocols2] = lapply (april[yesnocols2], factor)</code></pre>
+<pre class="r"><code>may$PHYS8 &lt;- factor(may$PHYS8)
+april$PHYS8 &lt;- factor(april$PHYS8)</code></pre>
 
 
 

@@ -1,0 +1,24 @@
+---
+title: "Refactoring"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(forcats)
+may <- read_csv("AP-Survey/may_happiness.csv")
+april <- read_csv("AP-Survey/april_happiness.csv")
+```
+
+
+Deleting variables relating to SOC5 to prevent data leakage:
+```{r delete-SOC5-answers-may}
+may <- may %>%
+    select(- c(SOC5A, SOC5B, SOC5C, SOC5D, SOC5E))
+```
+```{r delete-SOC5-answers-april}
+april <- april %>%
+    select(- c(SOC5A, SOC5B, SOC5C, SOC5D, SOC5E))
+```

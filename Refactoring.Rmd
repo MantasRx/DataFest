@@ -74,3 +74,63 @@ may$PHYS8 <- factor(may$PHYS8)
 april$PHYS8 <- factor(april$PHYS8)
 ```
 
+``` {r recode-likely}
+probcols = c("PHYS8", "PHYS10A", "PHYS10B", "PHYS10C", "PHYS10D", "PHYS10E", "ECON4A", "ECON4B")
+may[probcols] = lapply(may[probcols],factor)
+april[probcols] = lapply(april[probcols],factor)
+```
+
+``` {r recode-PHYS2}
+start_loc3 = match("PHYS2_1",colvars)
+
+
+end_loc3 = match("PHYS2_REF",colvars)
+
+
+may[start_loc3:end_loc3] = lapply(may[start_loc3:end_loc3], factor, ordered = FALSE)
+
+april[start_loc3:end_loc3] = lapply(april[start_loc3:end_loc3], factor, ordered = FALSE)
+```
+
+```{r recode-ECON7}
+start_loc4 = match("ECON7_1",colvars)
+
+
+end_loc4 = match("ECON7_REF",colvars)
+
+
+may[start_loc4:end_loc4] = lapply(may[start_loc4:end_loc4], factor, ordered = FALSE)
+
+april[start_loc4:end_loc4] = lapply(april[start_loc4:end_loc4], factor, ordered = FALSE)
+
+cols = c("ECON1", "ECON4")
+april[cols] = lapply(april[cols], factor, ordered = FALSE)
+may[cols] = lapply(may[cols], factor, ordered = FALSE)
+#I messed up and had to convert ECON2 back to numerical
+april$ECON2 = as.numeric(april$ECON2)
+```
+
+``` {r recode-a-huge-chunk}
+start_loc5 = match("ECON6A",colvars)
+
+
+end_loc5 = match("PHYS6",colvars)
+
+
+may[start_loc5:end_loc5] = lapply(may[start_loc5:end_loc5], factor, ordered = FALSE)
+
+april[start_loc5:end_loc5] = lapply(april[start_loc5:end_loc5], factor, ordered = FALSE)
+
+#convert back to numerical
+april$PHYS11_TEMP = as.numeric(april$PHYS11_TEMP)
+may$PHYS11_TEMP = as.numeric(may$PHYS11_TEMP)
+may$HH01S = as.numeric(may$HH01S)
+may$HH25S = as.numeric(may$HH25S)
+may$HH612S = as.numeric(may$HH612S)
+may$HH1317S = as.numeric(may$HH1317S)
+may$HH18OVS = as.numeric(may$HH18OVS)
+
+ordered_cols = c("HHINCOME", "AGE4", "AGE7", "EDUC4", "INC_BANNER", "AGE_BANNER", "HH_BANNER", "P_DENSE")
+may[ordered_cols] = lapply(may[ordered_cols], factor, ordered = TRUE)
+april[ordered_cols] = lapply(april[ordered_cols], factor, ordered = TRUE)
+```

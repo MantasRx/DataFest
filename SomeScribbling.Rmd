@@ -122,4 +122,7 @@ april_srvy <- april_srvy %>% mutate(happiness = happiness_calculator(SOC5AScore,
 
 # Result check april_srvy %>% select(happiness) %>% group_by(happiness) %>% summarise(n = n())
 
+#Write the new files with happiness variable as new .csv's into the directory
+may_happiness <- write.csv(may_srvy, "AP-Survey/may_happiness.csv")
+april_happiness <- write.csv(april_srvy, "AP-Survey/april_happiness.csv")
 ```

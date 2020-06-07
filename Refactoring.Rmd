@@ -130,7 +130,16 @@ may$HH612S = as.numeric(may$HH612S)
 may$HH1317S = as.numeric(may$HH1317S)
 may$HH18OVS = as.numeric(may$HH18OVS)
 
-ordered_cols = c("HHINCOME", "AGE4", "AGE7", "EDUC4", "INC_BANNER", "AGE_BANNER", "HH_BANNER", "P_DENSE")
+ordered_cols = c("EDUCATION", "HHSIZE1","HHINCOME", "AGE4", "AGE7", "EDUC4", "INC_BANNER", "AGE_BANNER", "HH_BANNER", "P_DENSE")
 may[ordered_cols] = lapply(may[ordered_cols], factor, ordered = TRUE)
 april[ordered_cols] = lapply(april[ordered_cols], factor, ordered = TRUE)
+
+unordered_cols = c("GENDER", "RACE1_BANNER","RACE2_BANNER", "RACETH", "RACE_R2", "LANGUAGE", "REGION4", "REGION9")
+may[unordered_cols] = lapply(may[unordered_cols], factor, ordered = FALSE)
+april[unordered_cols] = lapply(april[unordered_cols], factor, ordered = FALSE)
+```
+
+```{r write-csvs}
+write.csv(may,"AP-Survey\\may_modelling.csv", row.names = FALSE)
+write.csv(april,"AP-Survey\\april_modelling.csv", row.names = FALSE)
 ```

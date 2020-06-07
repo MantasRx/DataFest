@@ -486,9 +486,15 @@ may$HH612S = as.numeric(may$HH612S)
 may$HH1317S = as.numeric(may$HH1317S)
 may$HH18OVS = as.numeric(may$HH18OVS)
 
-ordered_cols = c(&quot;HHINCOME&quot;, &quot;AGE4&quot;, &quot;AGE7&quot;, &quot;EDUC4&quot;, &quot;INC_BANNER&quot;, &quot;AGE_BANNER&quot;, &quot;HH_BANNER&quot;, &quot;P_DENSE&quot;)
+ordered_cols = c(&quot;EDUCATION&quot;, &quot;HHSIZE1&quot;,&quot;HHINCOME&quot;, &quot;AGE4&quot;, &quot;AGE7&quot;, &quot;EDUC4&quot;, &quot;INC_BANNER&quot;, &quot;AGE_BANNER&quot;, &quot;HH_BANNER&quot;, &quot;P_DENSE&quot;)
 may[ordered_cols] = lapply(may[ordered_cols], factor, ordered = TRUE)
-april[ordered_cols] = lapply(april[ordered_cols], factor, ordered = TRUE)</code></pre>
+april[ordered_cols] = lapply(april[ordered_cols], factor, ordered = TRUE)
+
+unordered_cols = c(&quot;GENDER&quot;, &quot;RACE1_BANNER&quot;,&quot;RACE2_BANNER&quot;, &quot;RACETH&quot;, &quot;RACE_R2&quot;, &quot;LANGUAGE&quot;, &quot;REGION4&quot;, &quot;REGION9&quot;)
+may[unordered_cols] = lapply(may[unordered_cols], factor, ordered = FALSE)
+april[unordered_cols] = lapply(april[unordered_cols], factor, ordered = FALSE)</code></pre>
+<pre class="r"><code>write.csv(may,&quot;AP-Survey\\may_modelling.csv&quot;, row.names = FALSE)
+write.csv(april,&quot;AP-Survey\\april_modelling.csv&quot;, row.names = FALSE)</code></pre>
 
 
 

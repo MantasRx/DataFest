@@ -516,6 +516,21 @@ RMSE(testmay$happiness, predictions_demfeat, na.rm = TRUE)</code></pre>
 <pre><code>## [1] 0.07569895</code></pre>
 <pre class="r"><code>summary(dem_feat)$r.squared</code></pre>
 <pre><code>## [1] 0.07989523</code></pre>
+<pre class="r"><code>tidy(dem_feat)</code></pre>
+<pre><code>## # A tibble: 31 x 5
+##    term         estimate std.error statistic      p.value
+##    &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+##  1 (Intercept)    1.69       0.861    1.96   0.0497      
+##  2 AGE_BANNER.L  -1.81       2.02    -0.896  0.370       
+##  3 AGE_BANNER.Q   1.07       1.50     0.709  0.478       
+##  4 AGE_BANNER.C   0.354      0.675    0.524  0.600       
+##  5 HHINCOME.L    -0.360      0.277   -1.30   0.194       
+##  6 HHINCOME.Q     0.311      0.206    1.51   0.131       
+##  7 HHINCOME.C     0.306      0.359    0.853  0.393       
+##  8 HHINCOME^4     1.33       0.248    5.36   0.0000000874
+##  9 HHINCOME^5     0.0188     0.277    0.0678 0.946       
+## 10 HHINCOME^6     0.656      0.385    1.70   0.0889      
+## # … with 21 more rows</code></pre>
 
 
 

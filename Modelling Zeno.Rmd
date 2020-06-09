@@ -166,4 +166,5 @@ predictions_demfeat = predict(dem_feat, testmay)
 RMSE(testmay$happiness, predictions_demfeat, na.rm = TRUE)
 summary(dem_feat)$adj.r.squared
 summary(dem_feat)$r.squared
+tidy(dem_feat)
 ```

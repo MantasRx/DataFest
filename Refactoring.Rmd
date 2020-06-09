@@ -138,8 +138,3 @@ unordered_cols = c("GENDER", "RACE1_BANNER","RACE2_BANNER", "RACETH", "RACE_R2",
 may[unordered_cols] = lapply(may[unordered_cols], factor, ordered = FALSE)
 april[unordered_cols] = lapply(april[unordered_cols], factor, ordered = FALSE)
 ```
-
-```{r write-csvs}
-write.csv(may,"AP-Survey\\may_modelling.csv", row.names = FALSE)
-write.csv(april,"AP-Survey\\april_modelling.csv", row.names = FALSE)
-```

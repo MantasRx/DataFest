@@ -1,0 +1,418 @@
+---
+title: "AnalysisMR"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(forcats)
+library(caTools)
+may <- read_csv("AP-Survey/may_happiness.csv")
+april <- read_csv("AP-Survey/april_happiness.csv")
+```
+
+
+Deleting variables relating to SOC5 to prevent data leakage:
+```{r delete-SOC5-answers-may}
+may <- may %>%
+    select(- c(SOC5A, SOC5B, SOC5C, SOC5D, SOC5E))
+```
+```{r delete-SOC5-answers-april}
+april <- april %>%
+    select(- c(SOC5A, SOC5B, SOC5C, SOC5D, SOC5E))
+head(april)
+```
+
+```{r factor-SOC1}
+may$SOC1 <- factor(may$SOC1, ordered = TRUE, exclude = levels(factor(may$SOC1))[5:6])
+levels(may$SOC1) <- c("All", "Most", "Some", "None")
+
+april$SOC1 <- factor(april$SOC1, ordered = TRUE, exclude = levels(factor(april$SOC1))[5:6])
+levels(april$SOC1) <- c("All", "Most", "Some", "None")
+```
+
+```{r factor-all-SOCs}
+soc_cols = c("SOC2A", "SOC2B", "SOC3A", "SOC3B")
+may[soc_cols] = lapply (may[soc_cols], factor, ordered = FALSE)
+april[soc_cols] = lapply (april[soc_cols], factor, ordered = FALSE)
+```
+
+```{r factor-yes-no-questions}
+
+colvars = names(may)
+
+
+start_loc = match("ECON8A",colvars)
+
+
+end_loc = match("ECON8S",colvars)
+
+
+may[start_loc:end_loc] = lapply(may[start_loc:end_loc], factor, ordered = FALSE)
+
+april[start_loc:end_loc] = lapply(april[start_loc:end_loc], factor, ordered = FALSE)
+
+yesnocols = c("SOC4A", "SOC4B", "PHYS4", "PHYS5", "PHYS6")
+may[yesnocols] = lapply(may[yesnocols], factor)
+april[yesnocols] = lapply(april[yesnocols], factor)
+
+start_loc2 = match("PHYS1A",colvars)
+
+
+end_loc2 = match("PHYS1Q",colvars)
+
+
+may[start_loc2:end_loc2] = lapply(may[start_loc2:end_loc2], factor, ordered = FALSE)
+
+april[start_loc2:end_loc2] = lapply(april[start_loc2:end_loc2], factor, ordered = FALSE)
+
+yesnocols2 = c("PHYS11", "PHYS9A", "PHYS9B", "PHYS9C", "PHYS9D", "PHYS9E", "PHYS9F", "PHYS9G", "PHYS9H")
+may[yesnocols2] = lapply (may[yesnocols2], factor)
+april[yesnocols2] = lapply (april[yesnocols2], factor)
+```
+
+``` {r recode-PHYS8}
+may$PHYS8 <- factor(may$PHYS8)
+april$PHYS8 <- factor(april$PHYS8)
+```
+
+``` {r recode-likely}
+probcols = c("PHYS8", "PHYS10A", "PHYS10B", "PHYS10C", "PHYS10D", "PHYS10E", "ECON4A", "ECON4B")
+may[probcols] = lapply(may[probcols],factor)
+april[probcols] = lapply(april[probcols],factor)
+```
+
+``` {r recode-PHYS2}
+start_loc3 = match("PHYS2_1",colvars)
+
+
+end_loc3 = match("PHYS2_REF",colvars)
+
+
+may[start_loc3:end_loc3] = lapply(may[start_loc3:end_loc3], factor, ordered = FALSE)
+
+april[start_loc3:end_loc3] = lapply(april[start_loc3:end_loc3], factor, ordered = FALSE)
+```
+
+```{r recode-ECON7}
+start_loc4 = match("ECON7_1",colvars)
+
+
+end_loc4 = match("ECON7_REF",colvars)
+
+
+may[start_loc4:end_loc4] = lapply(may[start_loc4:end_loc4], factor, ordered = FALSE)
+
+april[start_loc4:end_loc4] = lapply(april[start_loc4:end_loc4], factor, ordered = FALSE)
+
+cols = c("ECON1", "ECON4")
+april[cols] = lapply(april[cols], factor, ordered = FALSE)
+may[cols] = lapply(may[cols], factor, ordered = FALSE)
+
+may$ECON1 <- may$ECON1 %>% factor(ordered = TRUE, exclude = levels(factor(may$ECON1))[4:5])
+levels(may$ECON1) <- c("Yes, I worked for someone else", "Yes, I was self-employed", "No, I did not work for pay last week")
+
+april$ECON1 <- april$ECON1 %>% factor(ordered = TRUE, exclude = levels(factor(april$ECON1))[4:6])
+levels(april$ECON1) <- c("Yes, I worked for someone else", "Yes, I was self-employed", "No, I did not work for pay last week")
+
+#I messed up and had to convert ECON2 back to numerical
+april$ECON2 = as.numeric(april$ECON2)
+```
+
+``` {r recode-a-huge-chunk}
+start_loc5 = match("ECON6A",colvars)
+
+
+end_loc5 = match("PHYS6",colvars)
+
+
+may[start_loc5:end_loc5] = lapply(may[start_loc5:end_loc5], factor, ordered = FALSE)
+
+april[start_loc5:end_loc5] = lapply(april[start_loc5:end_loc5], factor, ordered = FALSE)
+
+#convert back to numerical
+april$PHYS11_TEMP = as.numeric(april$PHYS11_TEMP)
+may$PHYS11_TEMP = as.numeric(may$PHYS11_TEMP)
+may$HH01S = as.numeric(may$HH01S)
+may$HH25S = as.numeric(may$HH25S)
+may$HH612S = as.numeric(may$HH612S)
+may$HH1317S = as.numeric(may$HH1317S)
+may$HH18OVS = as.numeric(may$HH18OVS)
+
+ordered_cols = c("EDUCATION", "HHSIZE1","HHINCOME", "AGE4", "AGE7", "EDUC4", "INC_BANNER", "AGE_BANNER", "HH_BANNER", "P_DENSE")
+may[ordered_cols] = lapply(may[ordered_cols], factor, ordered = TRUE)
+april[ordered_cols] = lapply(april[ordered_cols], factor, ordered = TRUE)
+
+unordered_cols = c("GENDER", "RACE1_BANNER","RACE2_BANNER", "RACETH", "RACE_R2", "LANGUAGE", "REGION4", "REGION9")
+may[unordered_cols] = lapply(may[unordered_cols], factor, ordered = FALSE)
+april[unordered_cols] = lapply(april[unordered_cols], factor, ordered = FALSE)
+```
+
+```{r intuition-guess-regression, warning=FALSE, message=FALSE}
+
+my_guess_vars <- c("AGE7", "SOC2A", "SOC2B", "SOC3A", "SOC3B", "SOC1", "SOC4A", "SOC4B", "PHYS8", names(april)[which(str_detect(names(april), "PHYS1(?=[:alpha:])"))], names(april)[which(str_detect(names(april), "ECON8(?=[:alpha:])"))], "ECON2", "ECON4A", "ECON4B", names(april)[which(str_detect(names(april), "ECON6(?=[:alpha:])"))], "ECON5A_A", "ECON5A_B", "PHYS11", names(april)[which(str_detect(names(april), "PHYS9(?=[:alpha:])"))], "HHINCOME", "EDUCATION", "HHSIZE1", "HH_BANNER", "ECON2fac")
+
+may <- may %>% mutate(ECON2fac = as.factor(case_when(
+  0 <= as.numeric(ECON2) & as.numeric(ECON2) < 25 ~ "0 to 25h",
+  25 <= as.numeric(ECON2) & as.numeric(ECON2) < 40 ~ "25 to 40h",
+  40 <= as.numeric(ECON2) & as.numeric(ECON2) < 60 ~ "40 to 60h",
+  60 <= as.numeric(ECON2) & as.numeric(ECON2) ~ "60h+",
+  TRUE ~ "No Info provided"
+)))
+
+april <- april %>% mutate(ECON2fac = as.factor(case_when(
+  0 <= as.numeric(ECON2) & as.numeric(ECON2) < 25 ~ "0 to 25h",
+  25 <= as.numeric(ECON2) & as.numeric(ECON2) < 40 ~ "25 to 40h",
+  40 <= as.numeric(ECON2) & as.numeric(ECON2) < 60 ~ "40 to 60h",
+  60 <= as.numeric(ECON2) & as.numeric(ECON2) ~ "60h+",
+  TRUE ~ "No Info provided"
+)))
+
+april_mg <- april %>% select(c(my_guess_vars, "happiness"))
+may_mg <- may %>% select(c(my_guess_vars, "happiness"))
+
+april_mg <- april_mg %>%
+  filter_all(all_vars(. != "(98) SKIPPED ON WEB")) %>%
+  filter_all(all_vars(. != "(99) REFUSE")) %>%
+  filter_all(all_vars(. != "(77) DON'T KNOW")) %>%
+  filter_all(all_vars(. != "DON'T KNOW")) %>%
+  filter_all(all_vars(. != "(99) REFUSED")) %>%
+  filter_all(all_vars(. != "(77) Not sure")) %>%
+  filter_all(all_vars(. != "(2) Applied for")) %>%
+  filter_all(all_vars(. != "(2) Applied")) %>%
+  filter_all(all_vars(. != "SKIPPED ON WEB")) %>%
+  filter_all(all_vars(. != "REFUSE")) %>%
+  filter_all(all_vars(. != "(88) Removed for disclosure risk")) %>%
+  filter_all(all_vars(. != "REFUSED"))
+
+may_mg <- may_mg %>%
+  filter_all(all_vars(. != "(98) SKIPPED ON WEB")) %>%
+  filter_all(all_vars(. != "(99) REFUSE")) %>%
+  filter_all(all_vars(. != "(77) DON'T KNOW")) %>%
+  filter_all(all_vars(. != "DON'T KNOW")) %>%
+  filter_all(all_vars(. != "(99) REFUSED")) %>%
+  filter_all(all_vars(. != "(77) Not sure")) %>%
+  filter_all(all_vars(. != "(2) Applied for")) %>%
+  filter_all(all_vars(. != "(2) Applied")) %>%
+  filter_all(all_vars(. != "SKIPPED ON WEB")) %>%
+  filter_all(all_vars(. != "REFUSE")) %>%
+  filter_all(all_vars(. != "(88) Removed for disclosure risk")) %>%
+  filter_all(all_vars(. != "REFUSED"))
+
+
+require(caTools)
+
+may_NN <- na.omit(may_mg)
+april_NN <- na.omit(april_mg)
+
+set.seed(121)
+sample <- sample.split(may_mg$happiness, SplitRatio = 0.75)
+trainmay <- subset(may_mg, sample == TRUE)
+testmay <- subset(may_mg, sample == FALSE)
+
+set.seed(101)
+sample <- sample.split(april_mg$happiness, SplitRatio = 0.75)
+trainapril <- subset(april_mg, sample == TRUE)
+testapril <- subset(april_mg, sample == FALSE)
+
+set.seed(99)
+sample <- sample.split(may_NN$happiness, SplitRatio = 0.75)
+trainmay_NN <- subset(may_NN, sample == TRUE)
+testmay_NN <- subset(may_NN, sample == FALSE)
+
+set.seed(96)
+sample <- sample.split(april_NN, SplitRatio = 0.75)
+trainapril_NN <- subset(april_NN, sample == TRUE)
+testapril_NN <- subset(april_NN, sample == FALSE)
+
+reg_may <- lm(happiness ~ AGE7 + SOC2A + SOC2B + SOC3A + SOC3B + SOC1 + SOC4A + SOC4B + PHYS8 + PHYS1A + PHYS1B + PHYS1C + PHYS1D + PHYS1E + PHYS1F + PHYS1G + PHYS1H + PHYS1I + PHYS1J + PHYS1K + PHYS1L + PHYS1M + PHYS1N + PHYS1O + PHYS1P + PHYS1Q + ECON8A + ECON8B + ECON8C + ECON8D + ECON8E + ECON8F + ECON8G + ECON8H + ECON8I + ECON8J + ECON8K + ECON8L + ECON8M + ECON8N + ECON8O + ECON8P + ECON8Q + ECON8R + ECON8S + ECON2fac + ECON4A + ECON4B + ECON6A + ECON6B + ECON6C + ECON6D + ECON6E + ECON6F + ECON6G + ECON6H + ECON6I + ECON6J + ECON6K + ECON6L + ECON5A_A + ECON5A_B + PHYS11 + PHYS9A + PHYS9B + PHYS9C + PHYS9D + PHYS9E + PHYS9F + PHYS9G + PHYS9H + HHINCOME + EDUCATION + HHSIZE1 + HH_BANNER, data = trainmay)
+
+
+reg_april <- lm(happiness ~ AGE7 + SOC2A + SOC2B + SOC3A + SOC3B + SOC1 + SOC4A + SOC4B + PHYS8 + PHYS1A + PHYS1B + PHYS1C + PHYS1D + PHYS1E + PHYS1F + PHYS1G + PHYS1H + PHYS1I + PHYS1J + PHYS1K + PHYS1L + PHYS1M + PHYS1N + PHYS1O + PHYS1P + PHYS1Q + ECON8A + ECON8B + ECON8C + ECON8D + ECON8E + ECON8F + ECON8G + ECON8H + ECON8I + ECON8J + ECON8K + ECON8L + ECON8M + ECON8N + ECON8O + ECON8P + ECON8Q + ECON8R + ECON8S + ECON2fac + ECON4A + ECON4B + ECON6A + ECON6B + ECON6C + ECON6D + ECON6E + ECON6F + ECON6G + ECON6H + ECON6I + ECON6J + ECON6K + ECON6L + ECON5A_A + ECON5A_B + PHYS11 + PHYS9A + PHYS9B + PHYS9C + PHYS9D + PHYS9E + PHYS9F + PHYS9G + PHYS9H + HHINCOME + EDUCATION + HHSIZE1 + HH_BANNER, data = trainapril)
+
+# for(i in 1:length(my_guess_vars) ) {print(length(levels(as.factor(may_mg[[names(may_mg)[[i]]]]) ) ) )}
+
+## No NAs
+reg_NN_may <- lm(happiness ~ AGE7 + SOC2A + SOC2B + SOC3A + SOC3B + SOC1 + SOC4A + SOC4B + PHYS8 + PHYS1A + PHYS1B + PHYS1C + PHYS1D + PHYS1E + PHYS1F + PHYS1G + PHYS1H + PHYS1I + PHYS1J + PHYS1K + PHYS1L + PHYS1M + PHYS1N + PHYS1O + PHYS1P + PHYS1Q + ECON8A + ECON8B + ECON8C + ECON8D + ECON8E + ECON8F + ECON8G + ECON8H + ECON8I + ECON8J + ECON8K + ECON8L + ECON8M + ECON8N + ECON8O + ECON8P + ECON8Q + ECON8R + ECON8S + ECON2fac + ECON4A + ECON4B + ECON6A + ECON6B + ECON6C + ECON6D + ECON6E + ECON6F + ECON6G + ECON6H + ECON6I + ECON6J + ECON6K + ECON6L + ECON5A_A + ECON5A_B + PHYS11 + PHYS9A + PHYS9B + PHYS9C + PHYS9D + PHYS9E + PHYS9F + PHYS9G + PHYS9H + HHINCOME + EDUCATION + HHSIZE1 + HH_BANNER, data = trainmay_NN)
+
+reg_NN_april <- lm(happiness ~ AGE7 + SOC2A + SOC2B + SOC3A + SOC3B + SOC1 + SOC4A + SOC4B + PHYS8 + PHYS1A + PHYS1B + PHYS1C + PHYS1D + PHYS1E + PHYS1F + PHYS1G + PHYS1H + PHYS1I + PHYS1J + PHYS1K + PHYS1L + PHYS1M + PHYS1N + PHYS1O + PHYS1P + PHYS1Q + ECON8A + ECON8B + ECON8C + ECON8D + ECON8E + ECON8F + ECON8G + ECON8H + ECON8I + ECON8J + ECON8K + ECON8L + ECON8M + ECON8N + ECON8O + ECON8P + ECON8Q + ECON8R + ECON8S + ECON2fac + ECON4A + ECON4B + ECON6A + ECON6B + ECON6C + ECON6D + ECON6E + ECON6F + ECON6G + ECON6H + ECON6I + ECON6J + ECON6K + ECON6L + ECON5A_A + ECON5A_B + PHYS11 + PHYS9A + PHYS9B + PHYS9C + PHYS9D + PHYS9E + PHYS9F + PHYS9G + PHYS9H + HHINCOME + EDUCATION + HHSIZE1 + HH_BANNER, data = trainapril_NN)
+
+## PHYS
+reg_NN_may_PHYS <- lm(happiness ~ AGE7 + PHYS8 + PHYS1A + PHYS1B + PHYS1C + PHYS1D + PHYS1E + PHYS1F + PHYS1G + PHYS1H + PHYS1I + PHYS1J + PHYS1K + PHYS1L + PHYS1M + PHYS1N + PHYS1O + PHYS1P + PHYS1Q + PHYS11 + PHYS9A + PHYS9B + PHYS9C + PHYS9D + PHYS9E + PHYS9F + PHYS9G + PHYS9H, data = trainmay_NN)
+
+reg_NN_april_PHYS <- lm(happiness ~ AGE7 + PHYS8 + PHYS1A + PHYS1B + PHYS1C + PHYS1D + PHYS1E + PHYS1F + PHYS1G + PHYS1H + PHYS1I + PHYS1J + PHYS1K + PHYS1L + PHYS1M + PHYS1N + PHYS1O + PHYS1P + PHYS1Q + PHYS11 + PHYS9A + PHYS9B + PHYS9C + PHYS9D + PHYS9E + PHYS9F + PHYS9G + PHYS9H, data = trainapril_NN)
+
+## SOC
+reg_NN_may_SOC <- lm(happiness ~ SOC2A + SOC2B + SOC3A + SOC3B + SOC1 + SOC4A + SOC4B + HHSIZE1 + HH_BANNER, data = trainmay_NN)
+
+reg_NN_april_SOC <- lm(happiness ~ SOC2A + SOC2B + SOC3A + SOC3B + SOC1 + SOC4A + SOC4B + HHSIZE1 + HH_BANNER, data = trainapril_NN)
+
+## ECON
+reg_NN_may_ECON <- lm(happiness ~ ECON8A + ECON8B + ECON8C + ECON8D + ECON8E + ECON8F + ECON8G + ECON8H + ECON8I + ECON8J + ECON8K + ECON8L + ECON8M + ECON8N + ECON8O + ECON8P + ECON8Q + ECON8R + ECON8S + ECON2fac + ECON4A + ECON4B + ECON6A + ECON6B + ECON6C + ECON6D + ECON6E + ECON6F + ECON6G + ECON6H + ECON6I + ECON6J + ECON6K + ECON6L + ECON5A_A + ECON5A_B + HHINCOME, data = trainmay_NN)
+
+reg_NN_april_ECON <- lm(happiness ~ ECON8A + ECON8B + ECON8C + ECON8D + ECON8E + ECON8F + ECON8G + ECON8H + ECON8I + ECON8J + ECON8K + ECON8L + ECON8M + ECON8N + ECON8O + ECON8P + ECON8Q + ECON8R + ECON8S + ECON2fac + ECON4A + ECON4B + ECON6A + ECON6B + ECON6C + ECON6D + ECON6E + ECON6F + ECON6G + ECON6H + ECON6I + ECON6J + ECON6K + ECON6L + ECON5A_A + ECON5A_B + HHINCOME, data = trainapril_NN)
+
+## Backwards selection
+
+# reg_NN_back_may <- step(reg_NN_may, direction = "backward")
+# summary(reg_NN_back_may)$adj.r.squared
+# 
+# reg_NN_back_april <- step(reg_NN_april, direction = "backward")
+# summary(reg_NN_back_april)$adj.r.squared
+# 
+# reg_back_may <- step(reg_may, direction = "backward")
+# summary(reg_back_may)$adj.r.squared
+# 
+# reg_back_april <- step(reg_april, direction = "backward")
+# summary(reg_back_april)$adj.r.squared
+# 
+# # By Category
+# 
+# reg_NN_back_may_ECON <- step(reg_NN_may_ECON, direction = "backward")
+# summary(reg_NN_back_may_ECON)$adj.r.squared
+# 
+# reg_NN_back_april_ECON <- step(reg_NN_april_ECON, direction = "backward")
+# summary(reg_NN_back_april_ECON)$adj.r.squared
+# 
+# 
+# reg_NN_back_may_SOC <- step(reg_NN_may_SOC, direction = "backward")
+# summary(reg_NN_back_may_SOC)$adj.r.squared
+# 
+# reg_NN_back_april_SOC <- step(reg_NN_april_SOC, direction = "backward")
+# summary(reg_NN_back_april_SOC)$adj.r.squared
+# 
+# reg_NN_back_may_PHYS <- step(reg_NN_may_PHYS, direction = "backward")
+# summary(reg_NN_back_may_PHYS)$adj.r.squared
+# 
+# reg_NN_back_april_PHYS <- step(reg_NN_april_PHYS, direction = "backward")
+# summary(reg_NN_back_april_PHYS)$adj.r.squared
+
+# PREDICTIONS
+# MAY
+prediction_reg_may <- predict(reg_may, testmay)
+
+# prediction_reg_NN_back_may <- predict(reg_NN_back_may, testmay_NN)
+
+prediction_reg_NN_may <- predict(reg_NN_may, testmay_NN)
+
+
+# prediction_reg_NN_back_may_PHYS <- predict(reg_NN_back_may_PHYS, testmay_NN)
+
+prediction_reg_NN_may_PHYS <- predict(reg_NN_may_PHYS, testmay_NN)
+
+
+# prediction_reg_NN_back_may_ECON <- predict(reg_NN_back_may_ECON, testmay_NN)
+
+prediction_reg_NN_may_ECON <- predict(reg_NN_may_ECON, testmay_NN)
+
+
+# prediction_reg_NN_back_may_SOC <- predict(reg_NN_back_may_SOC, testmay_NN)
+
+prediction_reg_NN_may_SOC <- predict(reg_NN_may_SOC, testmay_NN)
+
+
+# prediction_reg_back_may <- predict(reg_back_may, testmay)
+
+# APRIL
+
+prediction_reg_april <- predict(reg_april, testapril)
+
+# prediction_reg_NN_back_april <- predict(reg_NN_back_april, testapril_NN)
+
+prediction_reg_NN_april <- predict(reg_NN_april, testapril_NN)
+
+# prediction_reg_NN_back_april_PHYS <- predict(reg_NN_back_april_PHYS, testapril_NN)
+
+prediction_reg_NN_april_PHYS <- predict(reg_NN_april_PHYS, testapril_NN)
+
+# prediction_reg_NN_back_april_SOC <- predict(reg_NN_back_april_SOC, testapril_NN)
+
+prediction_reg_NN_april_SOC <- predict(reg_NN_april_SOC, testapril_NN)
+
+# prediction_reg_NN_back_april_ECON <- predict(reg_NN_back_april_ECON, testapril_NN)
+
+prediction_reg_NN_april_ECON <- predict(reg_NN_april_ECON, testapril_NN)
+
+# prediction_reg_back_april <- predict(reg_back_april, testapril)
+
+# PREDICTION CHECK
+
+RMSE <- function(m, o) {
+  sqrt(mean((m - o)^2))
+}
+
+# Full dataset, all variables, backwards: `r summary(reg_back_april)$adj.r.squared` / `r summary(reg_back_may)$adj.rs.squared`
+
+
+# NN dataset, all variables, backwards: `r summary(reg_NN_back_april)$adj.r.squared` / `r summary(reg_NN_back_may)$adj.r.squared`  
+
+# NN dataset, SOC, backwards: `r summary(reg_NN_back_april_SOC)$adj.r.squared` / `r summary(reg_NN_back_may_SOC)$adj.r.squared`
+# 
+# NN dataset, ECON, backwards: `r summary(reg_NN_back_april_ECON)$adj.r.squared` / `r summary(reg_NN_back_may_ECON)$adj.r.squared`
+# 
+# NN dataset, PHYS, backwards: `r summary(reg_NN_back_april_PHYS)$adj.r.squared` / `r summary(reg_NN_back_may_PHYS)$adj.r.squared`
+
+# Full dataset, all variables, backwards: `r RMSE(testapril$happiness, prediction_reg_back_april)` / `r RMSE(testmay$happiness, prediction_reg_back_may)`
+
+
+# NN dataset, SOC, backwards: `r RMSE(testapril$happiness, prediction_reg_NN_back_april_SOC)` / `r RMSE(testmay$happiness, prediction_reg_NN_back_may_SOC)`
+# 
+# NN dataset, ECON, backwards: `r RMSE(testapril$happiness, prediction_reg_NN_back_april_ECON)` / `r RMSE(testmay$happiness, prediction_reg_NN_back_may_ECON)`
+# 
+# NN dataset, PHYS, backwards: `r RMSE(testapril$happiness, prediction_reg_NN_back_april_PHYS)` / `r RMSE(testmay$happiness, prediction_reg_NN_back_may_PHYS)`
+
+# NN dataset, all variables, backwards: `r RMSE(testapril$happiness, prediction_reg_NN_back_april)` / `r RMSE(testmay$happiness, prediction_reg_NN_back_may)`
+
+```
+
+##Explanation and Results
+
+So a little explanation of the variable names:
+Taking the longest example - prediction_reg_NN_back_may_SOC
+
+prediction is for predicted outcome
+reg - regression
+NN - no NAs (na.omit() used)
+back - backwards selection used
+may - the dataset
+SOC - only the selected SOCXX variables out of the list
+
+The Method:
+I went through the questionnaire and selected the questions that I would think would contribute in a significant way to the happiness of an individual. This of course is subjective. The list is probably the easiest to track down just looking at the model above.
+
+I created two different models using all of the variables for regression - with na.omit and without it. This required some preliminary filtering of the results because, as Zeno encountered yesterday, any new occurence of a factor in the test variables would break the code. There keep on popping up new factors so pardon if the code breaks if you try to run it. I did not have time to go over the connections between variables in the regression and that is something that I could do rather quickly today evening.
+
+I then used the na.omit version of the datasets and checked by the survey categories whether any of the PHYS/ECON/SOC had the greatest impact on happiness. All of these models went through backward selection process and those and the standard regressions were checked against the test data.
+
+##Results
+
+#Adjusted R^2 values (APRIL/MAY):
+
+Full dataset, all variables: `r summary(reg_april)$adj.r.squared` / `r summary(reg_may)$adj.r.squared` 
+
+
+
+NN dataset, all variables: `r summary(reg_NN_april)$adj.r.squared` / `r summary(reg_NN_may)$adj.r.squared` 
+
+NN dataset, SOC: `r summary(reg_NN_april_SOC)$adj.r.squared` / `r summary(reg_NN_may_SOC)$adj.r.squared` 
+
+NN dataset, ECON: `r summary(reg_NN_april_ECON)$adj.r.squared` / `r summary(reg_NN_may_ECON)$adj.r.squared` 
+
+NN dataset, PHYS: `r summary(reg_NN_april_PHYS)$adj.r.squared` / `r summary(reg_NN_may_PHYS)$adj.r.squared`
+
+
+#RMSE values (APRIL/MAY):
+
+Full dataset, all variables:`r RMSE(testapril$happiness, prediction_reg_april)` / `r RMSE(testmay$happiness, prediction_reg_may)`
+
+
+
+NN dataset, all variables: `r RMSE(testapril$happiness, prediction_reg_NN_april)` / `r RMSE(testmay$happiness, prediction_reg_NN_may)`
+
+NN dataset, SOC: `r RMSE(testapril$happiness, prediction_reg_NN_april_SOC)` / `r RMSE(testmay$happiness, prediction_reg_NN_may_SOC)`
+
+NN dataset, ECON: `r RMSE(testapril$happiness, prediction_reg_NN_april_ECON)` / `r RMSE(testmay$happiness, prediction_reg_NN_may_ECON)`
+
+NN dataset, PHYS: `r RMSE(testapril$happiness, prediction_reg_NN_april_PHYS)` / `r RMSE(testmay$happiness, prediction_reg_NN_may_PHYS)`

@@ -143,11 +143,70 @@ april[unordered_cols] = lapply(april[unordered_cols], factor, ordered = FALSE)
 ```
 
 ```{r train-test-split}
+april <- april %>%
+  filter_all(all_vars(. != "(98) SKIPPED ON WEB")) %>%
+  filter_all(all_vars(. != "(99) REFUSE")) %>%
+  filter_all(all_vars(. != "(77) DON'T KNOW")) %>%
+  filter_all(all_vars(. != "DON'T KNOW")) %>%
+  filter_all(all_vars(. != "(99) REFUSED")) %>%
+  filter_all(all_vars(. != "(77) Not sure")) %>%
+  filter_all(all_vars(. != "(2) Applied for")) %>%
+  filter_all(all_vars(. != "(2) Applied")) %>%
+  filter_all(all_vars(. != "SKIPPED ON WEB")) %>%
+  filter_all(all_vars(. != "REFUSE")) %>%
+  filter_all(all_vars(. != "(88) Removed for disclosure risk")) %>%
+  filter_all(all_vars(. != "REFUSED"))
+may <- may %>%
+  filter_all(all_vars(. != "(98) SKIPPED ON WEB")) %>%
+  filter_all(all_vars(. != "(99) REFUSE")) %>%
+  filter_all(all_vars(. != "(77) DON'T KNOW")) %>%
+  filter_all(all_vars(. != "DON'T KNOW")) %>%
+  filter_all(all_vars(. != "(99) REFUSED")) %>%
+  filter_all(all_vars(. != "(77) Not sure")) %>%
+  filter_all(all_vars(. != "(2) Applied for")) %>%
+  filter_all(all_vars(. != "(2) Applied")) %>%
+  filter_all(all_vars(. != "SKIPPED ON WEB")) %>%
+  filter_all(all_vars(. != "REFUSE")) %>%
+  filter_all(all_vars(. != "(88) Removed for disclosure risk")) %>%
+  filter_all(all_vars(. != "REFUSED"))
+
+	may <- may %>% mutate(ECON2fac = as.factor(case_when(
+  0 <= as.numeric(ECON2) & as.numeric(ECON2) < 25 ~ "0 to 25h",
+  25 <= as.numeric(ECON2) & as.numeric(ECON2) < 40 ~ "25 to 40h",
+  40 <= as.numeric(ECON2) & as.numeric(ECON2) < 60 ~ "40 to 60h",
+  60 <= as.numeric(ECON2) & as.numeric(ECON2) ~ "60h+",
+  TRUE ~ "No Info provided"
+)))
+april <- april %>% mutate(ECON2fac = as.factor(case_when(
+  0 <= as.numeric(ECON2) & as.numeric(ECON2) < 25 ~ "0 to 25h",
+  25 <= as.numeric(ECON2) & as.numeric(ECON2) < 40 ~ "25 to 40h",
+  40 <= as.numeric(ECON2) & as.numeric(ECON2) < 60 ~ "40 to 60h",
+  60 <= as.numeric(ECON2) & as.numeric(ECON2) ~ "60h+",
+  TRUE ~ "No Info provided"
+)))
+```
+
+``` {r split}
 require(caTools)
-set.seed(101) 
-sample = sample.split(may$happiness, SplitRatio = 0.75)
-trainmay = subset(may, sample == TRUE)
-testmay  = subset(may, sample == FALSE)
+may_NN <- na.omit(may)
+april_NN <- na.omit(april)
+
+set.seed(121)
+sample <- sample.split(may$HHINCOME, SplitRatio = 0.75)
+trainmay <- subset(may, sample == TRUE)
+testmay <- subset(may, sample == FALSE)
+set.seed(101)
+sample <- sample.split(april$happiness, SplitRatio = 0.75)
+trainapril <- subset(april, sample == TRUE)
+testapril <- subset(april, sample == FALSE)
+set.seed(99)
+sample <- sample.split(may_NN$happiness, SplitRatio = 0.75)
+trainmay_NN <- subset(may_NN, sample == TRUE)
+testmay_NN <- subset(may_NN, sample == FALSE)
+set.seed(96)
+sample <- sample.split(april_NN, SplitRatio = 0.75)
+trainapril_NN <- subset(april_NN, sample == TRUE)
+testapril_NN <- subset(april_NN, sample == FALSE)
 ```
 
 ``` {r firstmodels}
@@ -183,7 +242,7 @@ summary(health)$r.squared
 tidy(health)
 ```
 
-``` {r how-about-healthecon-factors?}
+``` {r how-about-healthecon-factors?, eval = FALSE}
 #health and econ
 healthecon <- lm(happiness ~ PHYS9A + PHYS9B + PHYS9C + PHYS9D + PHYS9E + PHYS9F + PHYS9G + PHYS9H + PHYS3A + PHYS3B + PHYS3C + PHYS3D + PHYS3E + PHYS3F + PHYS3G + PHYS3H + PHYS3I + PHYS3J + PHYS3K + PHYS3L + PHYS3M + PHYS4 + PHYS8 + PHYS1A + PHYS1B + PHYS1C + PHYS1D + PHYS1E + PHYS1F + PHYS1G + PHYS1H + PHYS1I + PHYS1J + PHYS1K + PHYS1L + PHYS1M + PHYS1N + PHYS1O + PHYS1P + PHYS1Q + PHYS5 + PHYS6 + PHYS11 + PHYS10A + PHYS10B + PHYS10C + PHYS10D + PHYS10E + PHYS7_1 + PHYS7_2 + PHYS7_3 + PHYS7_4 + PHYS7_SKP + PHYS2_1 + PHYS2_2 + PHYS2_3 + PHYS2_4 + PHYS2_5 + PHYS2_6 + PHYS2_7 + PHYS2_8 + PHYS2_9 + PHYS2_10 + PHYS2_11 + PHYS2_12 + PHYS2_13 + PHYS2_14 + PHYS2_15 + PHYS2_16 + PHYS2_17 + PHYS2_18 + PHYS2_DK + PHYS2_SKP  + HHINCOME + ECON1 + HHINCOME + ECON4A + ECON4B, trainmay)
 testmaymod2 <- testmay %>%
@@ -194,4 +253,8 @@ mean(testmaymod2$happiness - predictions_healthecon, na.rm = TRUE)
 summary(healthecon)$adj.r.squared
 summary(healthecon)$r.squared
 tidy(healthecon)
+```
+
+``` {r econ-factors}
+econ <- lm(happiness ~ ECON8A + ECON8B + ECON8C + ECON8D +  ECON8E + ECON8F + ECON8G + ECON8H +  ECON8I + ECON8J + ECON8K + ECON8L +  ECON8M + ECON8N + ECON8O + ECON8P + ECON8Q + ECON8R + ECON8S + ECON7_1 + ECON7_2 + ECON7_3 + ECON7_4 +  ECON7_5 + ECON7_6 + ECON7_7 + ECON7_8 +  ECON7_DK + ECON7_SKP + ECON7_REF + ECON1 + ECON3 + ECON4A + ECON4B , trainmay)
 ```

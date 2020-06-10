@@ -495,42 +495,102 @@ may[unordered_cols] = lapply(may[unordered_cols], factor, ordered = FALSE)
 april[unordered_cols] = lapply(april[unordered_cols], factor, ordered = FALSE)</code></pre>
 <pre class="r"><code>require(caTools)
 set.seed(101) 
-sample = sample.split(may$REGION_WEIGHT, SplitRatio = 0.75)
+sample = sample.split(may$happiness, SplitRatio = 0.75)
 trainmay = subset(may, sample == TRUE)
 testmay  = subset(may, sample == FALSE)</code></pre>
 <pre class="r"><code># try predicting the happiness based on social interactions and income
 soc_int &lt;- lm(happiness ~ HHINCOME + SOC3A, trainmay)
 predictions_socint = predict(soc_int, testmay)
 RMSE(testmay$happiness, predictions_socint, na.rm = TRUE)</code></pre>
-<pre><code>## [1] 3.023062</code></pre>
+<pre><code>## [1] 3.075691</code></pre>
 <pre class="r"><code>summary(soc_int)$adj.r.squared</code></pre>
-<pre><code>## [1] 0.01659968</code></pre>
+<pre><code>## [1] 0.01961842</code></pre>
 <pre class="r"><code>summary(soc_int)$r.squared</code></pre>
-<pre><code>## [1] 0.01912656</code></pre>
+<pre><code>## [1] 0.02213639</code></pre>
 <pre class="r"><code># This is already quite a bit better!
 dem_feat = lm(happiness ~ AGE_BANNER + HHINCOME + RACE1_BANNER + GENDER + EDUCATION, trainmay)
-predictions_demfeat = predict(dem_feat, testmay)
-RMSE(testmay$happiness, predictions_demfeat, na.rm = TRUE)</code></pre>
-<pre><code>## [1] 2.917072</code></pre>
+testmaymod &lt;- testmay %&gt;%
+  filter(AGE_BANNER != &quot;(88) Removed for disclosure risk&quot;)
+predictions_demfeat = predict(dem_feat, testmaymod)
+RMSE(testmaymod$happiness, predictions_demfeat, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 2.989323</code></pre>
 <pre class="r"><code>summary(dem_feat)$adj.r.squared</code></pre>
-<pre><code>## [1] 0.07569895</code></pre>
+<pre><code>## [1] 0.08215675</code></pre>
 <pre class="r"><code>summary(dem_feat)$r.squared</code></pre>
-<pre><code>## [1] 0.07989523</code></pre>
+<pre><code>## [1] 0.08618177</code></pre>
 <pre class="r"><code>tidy(dem_feat)</code></pre>
-<pre><code>## # A tibble: 31 x 5
-##    term         estimate std.error statistic      p.value
-##    &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
-##  1 (Intercept)    1.69       0.861    1.96   0.0497      
-##  2 AGE_BANNER.L  -1.81       2.02    -0.896  0.370       
-##  3 AGE_BANNER.Q   1.07       1.50     0.709  0.478       
-##  4 AGE_BANNER.C   0.354      0.675    0.524  0.600       
-##  5 HHINCOME.L    -0.360      0.277   -1.30   0.194       
-##  6 HHINCOME.Q     0.311      0.206    1.51   0.131       
-##  7 HHINCOME.C     0.306      0.359    0.853  0.393       
-##  8 HHINCOME^4     1.33       0.248    5.36   0.0000000874
-##  9 HHINCOME^5     0.0188     0.277    0.0678 0.946       
-## 10 HHINCOME^6     0.656      0.385    1.70   0.0889      
-## # … with 21 more rows</code></pre>
+<pre><code>## # A tibble: 30 x 5
+##    term         estimate std.error statistic  p.value
+##    &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)    2.04      0.368     5.54   3.10e- 8
+##  2 AGE_BANNER.L  -2.02      0.151   -13.4    3.76e-40
+##  3 AGE_BANNER.Q   0.0945    0.0935    1.01   3.12e- 1
+##  4 HHINCOME.L    -0.157     0.270    -0.581  5.61e- 1
+##  5 HHINCOME.Q     0.143     0.199     0.720  4.72e- 1
+##  6 HHINCOME.C    -0.0323    0.336    -0.0962 9.23e- 1
+##  7 HHINCOME^4     1.35      0.246     5.51   3.63e- 8
+##  8 HHINCOME^5     0.0596    0.268     0.222  8.24e- 1
+##  9 HHINCOME^6     0.958     0.363     2.64   8.27e- 3
+## 10 HHINCOME^7     0.691     0.254     2.72   6.48e- 3
+## # … with 20 more rows</code></pre>
+<pre class="r"><code>#health factors improve the model quite a bit, next step would be to combine it with economic data
+health &lt;- lm(happiness ~ PHYS9A + PHYS9B + PHYS9C + PHYS9D + PHYS9E + PHYS9F + PHYS9G + PHYS9H + PHYS3A + PHYS3B + PHYS3C + PHYS3D + PHYS3E + PHYS3F + PHYS3G + PHYS3H + PHYS3I + PHYS3J + PHYS3K + PHYS3L + PHYS3M + PHYS4 + PHYS8 + PHYS1A + PHYS1B + PHYS1C + PHYS1D + PHYS1E + PHYS1F + PHYS1G + PHYS1H + PHYS1I + PHYS1J + PHYS1K + PHYS1L + PHYS1M + PHYS1N + PHYS1O + PHYS1P + PHYS1Q + PHYS5 + PHYS6 + PHYS11 + PHYS10A + PHYS10B + PHYS10C + PHYS10D + PHYS10E + PHYS7_1 + PHYS7_2 + PHYS7_3 + PHYS7_4 + PHYS7_SKP + PHYS2_1 + PHYS2_2 + PHYS2_3 + PHYS2_4 + PHYS2_5 + PHYS2_6 + PHYS2_7 + PHYS2_8 + PHYS2_9 + PHYS2_10 + PHYS2_11 + PHYS2_12 + PHYS2_13 + PHYS2_14 + PHYS2_15 + PHYS2_16 + PHYS2_17 + PHYS2_18 + PHYS2_DK + PHYS2_SKP, trainmay)
+testmaymod2 &lt;- testmay %&gt;%
+  filter(PHYS3A != &quot;(99) REFUSED&quot; &amp; PHYS8 != &quot;(77) DON&#39;T KNOW&quot;)
+predictions_health = predict(health, testmaymod2)</code></pre>
+<pre><code>## Warning in predict.lm(health, testmaymod2): prediction from a rank-deficient fit
+## may be misleading</code></pre>
+<pre class="r"><code>RMSE(testmaymod2$happiness, predictions_health, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 2.732872</code></pre>
+<pre class="r"><code>summary(health)$adj.r.squared</code></pre>
+<pre><code>## [1] 0.2927397</code></pre>
+<pre class="r"><code>summary(health)$r.squared</code></pre>
+<pre><code>## [1] 0.3141103</code></pre>
+<pre class="r"><code>tidy(health)</code></pre>
+<pre><code>## # A tibble: 201 x 5
+##    term                      estimate std.error statistic  p.value
+##    &lt;chr&gt;                        &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)                 7.42      1.06      7.01   2.70e-12
+##  2 PHYS9A(2) No                0.0219    0.0836    0.262  7.93e- 1
+##  3 PHYS9A(77) DON&#39;T KNOW      -3.22      4.42     -0.729  4.66e- 1
+##  4 PHYS9A(98) SKIPPED ON WEB  -0.172     0.273    -0.629  5.29e- 1
+##  5 PHYS9A(99) REFUSED         -1.42      4.76     -0.297  7.66e- 1
+##  6 PHYS9B(2) No                0.0290    0.100     0.290  7.72e- 1
+##  7 PHYS9B(77) DON&#39;T KNOW       2.22      2.64      0.839  4.01e- 1
+##  8 PHYS9B(98) SKIPPED ON WEB  -0.0503    0.267    -0.188  8.51e- 1
+##  9 PHYS9C(2) No                0.0119    0.189     0.0632 9.50e- 1
+## 10 PHYS9C(77) DON&#39;T KNOW       0.343     2.47      0.139  8.89e- 1
+## # … with 191 more rows</code></pre>
+<pre class="r"><code>#health and econ
+healthecon &lt;- lm(happiness ~ PHYS9A + PHYS9B + PHYS9C + PHYS9D + PHYS9E + PHYS9F + PHYS9G + PHYS9H + PHYS3A + PHYS3B + PHYS3C + PHYS3D + PHYS3E + PHYS3F + PHYS3G + PHYS3H + PHYS3I + PHYS3J + PHYS3K + PHYS3L + PHYS3M + PHYS4 + PHYS8 + PHYS1A + PHYS1B + PHYS1C + PHYS1D + PHYS1E + PHYS1F + PHYS1G + PHYS1H + PHYS1I + PHYS1J + PHYS1K + PHYS1L + PHYS1M + PHYS1N + PHYS1O + PHYS1P + PHYS1Q + PHYS5 + PHYS6 + PHYS11 + PHYS10A + PHYS10B + PHYS10C + PHYS10D + PHYS10E + PHYS7_1 + PHYS7_2 + PHYS7_3 + PHYS7_4 + PHYS7_SKP + PHYS2_1 + PHYS2_2 + PHYS2_3 + PHYS2_4 + PHYS2_5 + PHYS2_6 + PHYS2_7 + PHYS2_8 + PHYS2_9 + PHYS2_10 + PHYS2_11 + PHYS2_12 + PHYS2_13 + PHYS2_14 + PHYS2_15 + PHYS2_16 + PHYS2_17 + PHYS2_18 + PHYS2_DK + PHYS2_SKP  + HHINCOME + ECON1 + HHINCOME + ECON4A + ECON4B, trainmay)
+testmaymod2 &lt;- testmay %&gt;%
+  filter(PHYS3A != &quot;(99) REFUSED&quot; &amp; PHYS8 != &quot;(77) DON&#39;T KNOW&quot;)
+predictions_healthecon = predict(healthecon, testmaymod2)</code></pre>
+<pre><code>## Warning in predict.lm(healthecon, testmaymod2): prediction from a rank-deficient
+## fit may be misleading</code></pre>
+<pre class="r"><code>RMSE(testmaymod2$happiness, predictions_healthecon, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 2.735667</code></pre>
+<pre class="r"><code>mean(testmaymod2$happiness - predictions_healthecon, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 0.0199227</code></pre>
+<pre class="r"><code>summary(healthecon)$adj.r.squared</code></pre>
+<pre><code>## [1] 0.3030944</code></pre>
+<pre class="r"><code>summary(healthecon)$r.squared</code></pre>
+<pre><code>## [1] 0.3271002</code></pre>
+<pre class="r"><code>tidy(healthecon)</code></pre>
+<pre><code>## # A tibble: 229 x 5
+##    term                      estimate std.error statistic  p.value
+##    &lt;chr&gt;                        &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)                6.89       1.06      6.50   8.38e-11
+##  2 PHYS9A(2) No              -0.0792     0.0892   -0.888  3.75e- 1
+##  3 PHYS9A(77) DON&#39;T KNOW     -3.94       4.41     -0.893  3.72e- 1
+##  4 PHYS9A(98) SKIPPED ON WEB -0.297      0.275    -1.08   2.81e- 1
+##  5 PHYS9A(99) REFUSED        -0.783      4.75     -0.165  8.69e- 1
+##  6 PHYS9B(2) No               0.0217     0.100     0.217  8.28e- 1
+##  7 PHYS9B(77) DON&#39;T KNOW      2.46       2.62      0.938  3.49e- 1
+##  8 PHYS9B(98) SKIPPED ON WEB  0.00932    0.266     0.0350 9.72e- 1
+##  9 PHYS9C(2) No              -0.0247     0.188    -0.131  8.96e- 1
+## 10 PHYS9C(77) DON&#39;T KNOW      0.531      2.46      0.216  8.29e- 1
+## # … with 219 more rows</code></pre>
 
 
 
